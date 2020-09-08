@@ -1,0 +1,33 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    awesome_print (1.8.0)
+    aws-eventstream (1.1.0)
+    aws-partitions (1.365.0)
+    aws-sdk-acm (1.36.0)
+      aws-sdk-core (~> 3, >= 3.99.0)
+      aws-sigv4 (~> 1.1)
+    aws-sdk-core (3.105.0)
+      aws-eventstream (~> 1, >= 1.0.2)
+      aws-partitions (~> 1, >= 1.239.0)
+      aws-sigv4 (~> 1.1)
+      jmespath (~> 1.0)
+    aws-sigv4 (1.2.2)
+      aws-eventstream (~> 1, >= 1.0.2)
+    coderay (1.1.3)
+    jmespath (1.4.0)
+    method_source (1.0.0)
+    pry (0.13.1)
+      coderay (~> 1.1)
+      method_source (~> 1.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  awesome_print
+  aws-sdk-acm
+  pry
+
+BUNDLED WITH
+   2.1.4

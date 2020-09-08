@@ -1,0 +1,63 @@
+#!/usr/bin/env ruby
+
+require 'bundler/setup'
+require 'aws-sdk-acm'
+require 'pry'
+require 'ap'
+
+# Add lib to ruby load path
+lib = File.expand_path('../../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
+# initialize credentials
+profile_name = ENV.fetch('PROFILE', "staging")
+credentials = Aws::SharedCredentials.new(profile_name: profile_name)
+region_name = ENV.fetch('REGION', 'us-east-1')
+
+client = Aws::ACM::Client.new(
+  region: region_name,
+  credentials: credentials,
+)
+
+ca_arn = ENV.fetch('AWS_CA_ARN', '')
+
+# request certificate
+
+request_cert_resp = client.request_certificate({
+  domain_name: "fluentd.kafka.zdsystest.com", # required
+
+  certificate_authority_arn: ca_arn,
+  tags: [
+    {
+      key: "owner", # required
+      value: "glider@example.com",
+    },
+    {
+      key: "Source",
+      value: "RubyScript"
+    },
+    {
+      key: "CreatedAt",
+      value: Time.now.to_s
+    }
+  ],
+})
+# from above request
+arn = request_cert_resp.certificate_arn
+
+puts "Certificated Created. Arn: #{arn}"
+puts "Exporting certificate now ....."
+
+sleep 4 # if we request too soon, aws often returns ResourceNotFoundException
+
+resp = client.export_certificate({
+  certificate_arn: arn, # required
+  passphrase: "pass1234", # required
+})
+
+puts "\n======== Private Key: ========\n"
+puts resp.private_key
+puts "\n=========Certificate: =======\n"
+puts resp.certificate
+puts "\n========= Certificate Chain: ========\n"
+puts resp.certificate_chain
